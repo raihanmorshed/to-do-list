@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
 
-
 const app = express();
 
 let items = [];
@@ -26,6 +25,9 @@ app.get("/", function(req, res){
 app.post("/", (req,res) => {
 
     var item = req.body.newItem;
+    //creating an item here, every time the user adds an item,
+    //it gets pushed to the items array, and items array is displayed 
+    //in res.render above(app.get)
 
     if (req.body.list === "Work") {
         workItems.push(item);
