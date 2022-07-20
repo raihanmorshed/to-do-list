@@ -14,7 +14,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser:true});
+mongoose.connect("mongodb+srv://admin-raihan:Admin1234@cluster0.88b2v.mongodb.net/todolistDB", {useNewUrlParser:true});
 
 const itemsSchema = {
     name: String
@@ -133,13 +133,25 @@ app.post("/", (req,res) => {
 app.post("/delete", (req,res) => {
     const checkedItemId = req.body.checkbox;
 
-    Item.findByIdAndRemove(checkedItemId, function(err){
-        if(!err) {
-            console.log("Successfully deleted checked item");
-            res.redirect("/");
-        } 
+    const listName = req.body.listName;
 
-    });
+    if (listName === "Today") {
+        Item.findByIdAndRemove(checkedItemId, function(err){
+            if(!err) {
+                console.log("Successfully deleted checked item");
+                res.redirect("/");
+            } 
+    
+        });
+    } else { //delete request comes from a custom list
+        List.findOneAndUpdate({name:listName},{$pull:{items:{_id:checkedItemId}}}, function(err, foundList) {
+            if(!err) {
+                res.redirect("/" + listName);
+            }
+        });
+    }
+
+    
 });
 
 app.get("/work", (req,res) => {
